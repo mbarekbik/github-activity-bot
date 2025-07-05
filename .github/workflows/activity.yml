@@ -2,8 +2,8 @@ name: Fake GitHub Activity
 
 on:
   schedule:
-    - cron: '0 12 * * *'  # tous les jours à midi (UTC)
-  workflow_dispatch:  # pour lancer manuellement
+    - cron: '0 12 * * *'  # chaque jour à midi (UTC)
+  workflow_dispatch:
 
 jobs:
   commit:
@@ -12,14 +12,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Configure Git
+      - name: Setup Git
         run: |
           git config user.name "mbarek-bot"
           git config user.email "mbark.bik@gmail.com"
 
       - name: Make a fake commit
         run: |
-          echo "$(date) - Auto activity" >> activity.log
+          echo "$(date) - Keep active" >> activity.log
           git add activity.log
-          git commit -m "Daily activity"
-          git push
+          if git diff --cached --quiet; then
+            echo "❌ Aucun changement à commit — on arrête."
+            exit 0
+          fi
+          git commit -m "✅ Daily activity"
+
+      - name: Push changes
+        run: |
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
