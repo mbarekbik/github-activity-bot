@@ -2,7 +2,7 @@ name: Fake GitHub Activity
 
 on:
   schedule:
-    - cron: '0 12 * * *'  # chaque jour à midi (UTC)
+    - cron: '19 12  * * *'  # chaque jour à midi (UTC)
   workflow_dispatch:
 
 jobs:
